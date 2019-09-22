@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled, { createGlobalStyle } from 'theme/themed-styled-components'
 import MaterialBrowser from 'components/MaterialBrowser'
 import ViewportPanel from 'components/ViewportPanel'

@@ -2,10 +2,10 @@ import * as BABYLON from 'babylonjs'
 import World from './World'
 
 export default class ViewportEngine {
-  _engine: BABYLON.Engine
-  _canvas: HTMLCanvasElement
-  _scene: BABYLON.Scene | null
-  _world: World
+  private _engine: BABYLON.Engine
+  private _canvas: HTMLCanvasElement
+  private _scene: BABYLON.Scene | null
+  private _world: World
 
   constructor(canvas: HTMLCanvasElement) {
     this._canvas = canvas

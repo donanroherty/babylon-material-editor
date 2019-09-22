@@ -10,5 +10,5 @@ export default function useResize(
     return () => {
       if (target) window.removeEventListener('resize', cb)
     }
-  }, [])
+  }, [ref, cb])
 }
