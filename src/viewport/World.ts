@@ -4,17 +4,24 @@ import PBRMaterial from './PBRMaterial'
 import ViewportEngine from './ViewportEngine'
 
 export default class World {
-  private _main: ViewportEngine
+  private _viewportEngine: ViewportEngine
   private _engine: BABYLON.Engine
   private _scene: BABYLON.Scene
   private _canvas: HTMLCanvasElement
+
+  private _keyLight: BABYLON.DirectionalLight | null
+  private _camera: BABYLON.ArcRotateCamera
+  private _displayModel: BABYLON.Mesh
+  private _environment: BABYLON.EnvironmentHelper | null
+
+  private _modelHeight = 2
 
   constructor(
     main: ViewportEngine,
     engine: BABYLON.Engine,
     canvas: HTMLCanvasElement
   ) {
-    this._main = main
+    this._viewportEngine = main
     this._engine = engine
     this._canvas = canvas
 
@@ -22,69 +29,71 @@ export default class World {
     this._scene = new BABYLON.Scene(this._engine)
 
     // Populate scene
-    this.createEnvironment(this._scene)
-    this.createCamera(this._canvas, this._scene)
-    this.createLighting(this._scene)
-    this.createDisplayModel(this._scene)
-    // this.createGround(this._scene)
+
+    this._camera = this.createCamera(this._canvas, this._scene)
+    this._keyLight = this.createKeyLight(this._scene)
+    this._environment = this.createEnvironment(this._scene)
+    this._displayModel = this.createDisplayModel(this._scene)
 
     // Render the scene
-    this._main.renderScene(this._scene)
+    this._viewportEngine.renderScene(this._scene)
   }
 
   createCamera = (canvas: HTMLCanvasElement, scene: BABYLON.Scene) => {
-    const modelHeight = 2
-
     const camera = new BABYLON.ArcRotateCamera(
       'camera_01',
-      0,
+      -Math.PI / 2,
       Math.PI / 2,
       4,
-      BABYLON.Vector3.Zero(),
+      new Vector3(0, this._modelHeight / 2, 0),
       scene
     )
-    camera.setTarget(new Vector3(0, modelHeight * 0.5, 0))
-    camera.attachControl(canvas, false)
-    camera.inertia = 0.4
-    camera.fov = ((90 * Math.PI) / 180) * 0.5
-  }
 
-  createLighting = (scene: BABYLON.Scene) => {
-    new BABYLON.HemisphericLight('light_env', new Vector3(0, 1, 0), scene)
+    camera.attachControl(canvas, false)
+    camera.inertia = 0.9
+
+    return camera
   }
 
   createEnvironment = (scene: BABYLON.Scene) => {
-    const hdr: BABYLON.CubeTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-      'assets/environment/environment.dds',
-      scene
-    )
-    hdr.gammaSpace = false
-    // scene.createDefaultSkybox(hdr, true, 0.5, 0, true)
-    scene.createDefaultEnvironment({
+    return scene.createDefaultEnvironment({
       createGround: false,
       createSkybox: true,
-      skyboxTexture: 'assets/environment/environment.dds'
+      cameraExposure: 1.6,
+      skyboxTexture: 'assets/environment/Runyon_Canyon_A_2k_cube_specular.dds'
     })
-    // scene.environmentTexture = hdr
+  }
+
+  createKeyLight = (scene: BABYLON.Scene) => {
+    const keyLightPos = new Vector3(-2, 3, -1)
+    const keyLight = new BABYLON.DirectionalLight(
+      'key_light_01',
+      Vector3.Zero().subtract(keyLightPos), // direction points at 0,0,0
+      scene
+    )
+    keyLight.diffuse = new BABYLON.Color3(247, 235, 203)
+    keyLight.intensity = 0.01
+
+    return keyLight
   }
 
   createDisplayModel = (scene: BABYLON.Scene) => {
-    const sphereRad = 2
     const sphere = BABYLON.Mesh.CreateSphere(
       'sphere_01',
       24,
-      sphereRad,
+      this._modelHeight,
       scene,
       false,
       BABYLON.Mesh.FRONTSIDE
     )
-    sphere.position.y = 1
+    sphere.position.y = this._modelHeight / 2
 
-    const mat = new PBRMaterial('mat_sphere', scene, { roughness: 0 })
+    const mat = new PBRMaterial('mat_sphere', scene, {
+      roughness: 0.1,
+      metallic: 1
+    })
     sphere.material = mat
-  }
 
-  createGround = (scene: BABYLON.Scene) => {
-    const ground = BABYLON.Mesh.CreateGround('ground_01', 6, 6, 2, scene, false)
+    return sphere
   }
 }
