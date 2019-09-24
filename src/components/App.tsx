@@ -33,8 +33,6 @@ body {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  max-width: 800px;
-  max-height: 700px;
   display: grid;
   grid-template-columns: 240px 1fr;
   grid-template-rows: 360px 1fr;

@@ -9,10 +9,12 @@ export default class World {
   private _scene: BABYLON.Scene
   private _canvas: HTMLCanvasElement
 
-  private _keyLight: BABYLON.DirectionalLight | null
+  private _keyLight: BABYLON.DirectionalLight | null = null
   private _camera: BABYLON.ArcRotateCamera
   private _displayModel: BABYLON.Mesh
-  private _environment: BABYLON.EnvironmentHelper | null
+  private _environment: BABYLON.EnvironmentHelper | null = null
+  private _environmentTexturePath: string =
+    'C:\\Users\\Ronan\\Projects\\Apps\\babylon-material-editor\\public\\assets\\environment\\parking.dds'
 
   private _modelHeight = 2
 
@@ -29,7 +31,6 @@ export default class World {
     this._scene = new BABYLON.Scene(this._engine)
 
     // Populate scene
-
     this._camera = this.createCamera(this._canvas, this._scene)
     this._keyLight = this.createKeyLight(this._scene)
     this._environment = this.createEnvironment(this._scene)
@@ -59,8 +60,8 @@ export default class World {
     return scene.createDefaultEnvironment({
       createGround: false,
       createSkybox: true,
-      cameraExposure: 1.6,
-      skyboxTexture: 'assets/environment/Runyon_Canyon_A_2k_cube_specular.dds'
+      cameraExposure: 1,
+      skyboxTexture: this._environmentTexturePath
     })
   }
 
@@ -90,7 +91,8 @@ export default class World {
 
     const mat = new PBRMaterial('mat_sphere', scene, {
       roughness: 0.1,
-      metallic: 1
+      metallic: 1,
+      environmentTexturePath: this._environmentTexturePath
     })
     sphere.material = mat
 
