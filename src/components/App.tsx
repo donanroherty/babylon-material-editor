@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { createGlobalStyle } from 'theme/themed-styled-components'
 import MaterialBrowser from 'components/MaterialBrowser'
-import ViewportPanel from 'components/ViewportPanel'
+import Viewport from 'components/Viewport'
 import MaterialPropertyEditor from 'components/MaterialPropertyEditor'
 
 const App: React.FC = () => {
@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <Wrapper>
       <GlobalStyle />
       <MaterialBrowser />
-      <ViewportPanel />
+      <Viewport />
       <MaterialPropertyEditor />
     </Wrapper>
   )
@@ -37,7 +37,6 @@ const Wrapper = styled.div`
   max-height: 700px;
   display: grid;
   grid-template-columns: 240px 1fr;
-  grid-template-rows: 360px 1fr;
   grid-template-areas:
     'material-browser viewport'
     'material-browser material-property-editor';
