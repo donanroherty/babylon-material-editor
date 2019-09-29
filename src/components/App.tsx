@@ -3,8 +3,16 @@ import styled, { createGlobalStyle } from 'theme/themed-styled-components'
 import MaterialBrowser from 'components/MaterialBrowser'
 import ViewportPanel from 'components/ViewportPanel'
 import MaterialPropertyEditor from 'components/MaterialPropertyEditor'
+import useAppState from 'state/StateProvider'
+import { AppActions } from 'state/app/AppActions'
 
 const App: React.FC = () => {
+  const [state, dispatch] = useAppState().useAppReducer()
+
+  setTimeout(() => {
+    dispatch(AppActions.setMaterial(0))
+  }, 2000)
+
   return (
     <Wrapper>
       <GlobalStyle />
