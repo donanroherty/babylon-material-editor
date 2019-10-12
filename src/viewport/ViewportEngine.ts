@@ -1,5 +1,7 @@
+import { MaterialState } from 'state/material/materialReducer'
 import * as BABYLON from 'babylonjs'
 import World from './World'
+import { Material } from 'types/types'
 
 export default class ViewportEngine {
   private _engine: BABYLON.Engine
@@ -35,5 +37,9 @@ export default class ViewportEngine {
         console.log('scene failed to create')
       }
     })
+  }
+
+  setMaterial = (mat: Material) => {
+    this._world.setMaterial(mat)
   }
 }

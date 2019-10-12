@@ -5,8 +5,10 @@
   "dependencies": {
     "@testing-library/jest-dom": "^4.1.0",
     "@types/babylonjs": "^2.4.1",
+    "@types/react-color": "^3.0.1",
     "babylonjs": "^4.0.3",
     "react": "^16.9.0",
+    "react-color": "^2.17.3",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.2",
     "styled-components": "^4.3.2",

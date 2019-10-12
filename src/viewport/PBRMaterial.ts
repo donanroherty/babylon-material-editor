@@ -1,14 +1,14 @@
 import * as BABYLON from 'babylonjs'
 
 export interface PBRMaterialDef {
-  baseColor?: [number, number, number]
+  baseColor?: BABYLON.Color3
   metallic?: number
   roughness?: number
   environmentTexturePath?: string
 }
 
 const defaultMaterial: PBRMaterialDef = {
-  baseColor: [0.5, 0.5, 0.5],
+  baseColor: new BABYLON.Color3(0.5, 0.5, 0.5),
   metallic: 0,
   roughness: 1,
   environmentTexturePath: ''
@@ -37,7 +37,7 @@ export default class PBRMaterial extends BABYLON.PBRMetallicRoughnessMaterial {
       ...materialDef
     }
 
-    this.baseColor = new BABYLON.Color3(...mat.baseColor!)
+    this.baseColor = mat.baseColor!
     this.metallic = mat.metallic!
     this.roughness = mat.roughness!
     this._environmentTexturePath = mat.environmentTexturePath!

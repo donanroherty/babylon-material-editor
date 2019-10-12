@@ -1,13 +1,14 @@
 /**
  * StateProvider
- * Creates a Provider and Context to supply consistent state to a tree of components
+ * Creates a Context Provider to supply state to a tree of child components
  * StateProvider wraps all components which need access to state reducers
  * StateContext ensures that all sub-components of StateProvider use the same instance of state
  * by passing state reducers to all children via its value prop
  */
 
 import React, { useReducer, createContext, Dispatch } from 'react'
-import appReducFunc, {
+import {
+  appReducer,
   AppState,
   appInitialState,
   AppAcceptedActions
@@ -21,7 +22,8 @@ const StateContext = createContext<AppContextType | undefined>(undefined)
 
 // StateProvider wraps <App/> in index.tsx
 export function StateProvider(props: any) {
-  const useAppReducer = () => useReducer(appReducFunc, appInitialState)
+  const useAppReducer = () => useReducer(appReducer, appInitialState)
+
   return <StateContext.Provider value={{ useAppReducer }} {...props} />
 }
 

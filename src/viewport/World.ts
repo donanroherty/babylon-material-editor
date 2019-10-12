@@ -1,5 +1,7 @@
+import { Material } from 'types/types'
+import { MaterialState } from './../state/material/materialReducer'
 import * as BABYLON from 'babylonjs'
-import { Vector3 } from 'babylonjs'
+import { Vector3, PBRMetallicRoughnessMaterial } from 'babylonjs'
 import PBRMaterial from './PBRMaterial'
 import ViewportEngine from './ViewportEngine'
 
@@ -90,12 +92,32 @@ export default class World {
     sphere.position.y = this._modelHeight / 2
 
     const mat = new PBRMaterial('mat_sphere', scene, {
-      roughness: 0.1,
-      metallic: 1,
+      baseColor: new BABYLON.Color3(1, 0, 0),
+      roughness: 1,
+      metallic: 0,
       environmentTexturePath: this._environmentTexturePath
     })
     sphere.material = mat
 
     return sphere
+  }
+
+  createMaterial = (mat: Material, scene: BABYLON.Scene) => {
+    const newMat = new PBRMetallicRoughnessMaterial('mat_sphere', scene)
+    newMat.baseColor = new BABYLON.Color3(
+      mat.baseColor.r / 255,
+      mat.baseColor.g / 255,
+      mat.baseColor.b / 255
+    )
+    newMat.roughness = mat.roughness
+    newMat.metallic = mat.metallic
+    return newMat
+  }
+
+  setMaterial = (mat: Material) => {
+    if (this._displayModel) {
+      const newMaterial = this.createMaterial(mat, this._scene)
+      this._displayModel.material = newMaterial
+    }
   }
 }
