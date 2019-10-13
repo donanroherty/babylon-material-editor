@@ -8,7 +8,7 @@ import {
 import {
   ACTION_SET_ROUGHNESS,
   ACTION_SET_METALLIC,
-  ACTION_SET_BASE_COLOR
+  ACTION_SET_ALBEDO_COLOR
 } from 'state/material/MaterialActions'
 import useOutsideClick from 'hooks/useOutsideClick'
 
@@ -25,6 +25,13 @@ const MaterialEditor: React.FC<Props> = ({
   const colorPickerRef = useRef<HTMLElement>(null)
   const [albedoColorPickerOpen, setAlbedoColorPickerOpen] = useState(false)
 
+  const {
+    albedoColor,
+    roughness,
+    metallic,
+    metallicTexture
+  } = materialState.materials[materialState.activeMaterial]
+
   const hideAlbedoColorPicker = () => setAlbedoColorPickerOpen(false)
 
   useOutsideClick(colorPickerRef, hideAlbedoColorPicker)
@@ -33,7 +40,7 @@ const MaterialEditor: React.FC<Props> = ({
     setAlbedoColorPickerOpen(true)
   }
   const handleAlbedoColorChange = (color: ColorResult) => {
-    materialDispatch({ type: ACTION_SET_BASE_COLOR, payload: color.rgb })
+    materialDispatch({ type: ACTION_SET_ALBEDO_COLOR, payload: color.rgb })
   }
 
   const handleRoughnessChange = (event: any) => {
@@ -52,19 +59,19 @@ const MaterialEditor: React.FC<Props> = ({
   const [filePath, setFilePath] = useState<string | null>(null)
   const [file, setFile] = useState<string | ArrayBuffer | null>(null)
 
-  const fileChangedHandler = (e: any) => {
-    if (e.target.files.length === 0) return
+  // const fileChangedHandler = (e: any) => {
+  // if (e.target.files.length === 0) return
 
-    const file = e.target.files[0]
+  // const file = e.target.files[0]
 
-    setFilePath(file.path)
+  // setFilePath(file.path)
 
-    // const reader = new FileReader()
-    // reader.onloadend = () => {
-    //   setFile(reader.result)
-    // }
-    // reader.readAsDataURL(file)
-  }
+  // const reader = new FileReader()
+  // reader.onloadend = () => {
+  //   setFile(reader.result)
+  // }
+  // reader.readAsDataURL(file)
+  // }
 
   const handleClearFileDialog = () => {
     setFile(null)
@@ -81,11 +88,11 @@ const MaterialEditor: React.FC<Props> = ({
         <ColorSwatch
           ref={colorPickerRef}
           onClick={handlAlbedoColorSwatchClick}
-          color={materialState.albedoColor}
+          color={albedoColor}
         >
           {albedoColorPickerOpen && (
             <StyledChromePicker
-              color={materialState.albedoColor}
+              color={albedoColor}
               onChangeComplete={handleAlbedoColorChange}
               disableAlpha
             />
@@ -99,7 +106,7 @@ const MaterialEditor: React.FC<Props> = ({
         </Label>
         <Parameter
           type="number"
-          value={materialState.roughness}
+          value={roughness}
           onChange={handleRoughnessChange}
           step={0.01}
         />
@@ -111,7 +118,7 @@ const MaterialEditor: React.FC<Props> = ({
         </Label>
         <Parameter
           type="number"
-          value={materialState.metallic}
+          value={metallic}
           onChange={handleMetallicChange}
           step={0.01}
         />
@@ -121,9 +128,7 @@ const MaterialEditor: React.FC<Props> = ({
         <Label>
           <Text>Metallic texture</Text>
         </Label>
-        <FilePath onClick={handleOpenFileDialog}>
-          {materialState.metallicTexture}
-        </FilePath>
+        <FilePath onClick={handleOpenFileDialog}>{metallicTexture}</FilePath>
         <ClearFilePathButton onClick={handleClearFileDialog}>
           <Text>X</Text>
         </ClearFilePathButton>

@@ -3,10 +3,10 @@ import { AppActions, ACTION_SELECT_MATERIAL } from './AppActions'
 
 export type AppAcceptedActions = ActionsUnion<typeof AppActions>
 export type AppState = {
-  selectedMaterial: number | null
+  activeMaterial: number | null
 }
 export const appInitialState: AppState = {
-  selectedMaterial: null
+  activeMaterial: null
 }
 
 export function appReducer(

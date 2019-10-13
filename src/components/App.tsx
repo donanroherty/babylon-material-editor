@@ -9,11 +9,8 @@ import {
   MaterialState,
   materialInitialState
 } from 'state/material/materialReducer'
-import { appReducer, appInitialState } from 'state/app/appReducer'
 
 const App: React.FC = () => {
-  // const [appState, appDispatch] = useAppState().useAppReducer()
-  // const [state, dispatch] = useReducer(appReducer, appInitialState)
   const [materialState, materialDispatch] = useReducer(
     materialReducer,
     materialInitialState

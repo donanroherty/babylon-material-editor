@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react'
+import React, { useRef, useCallback } from 'react'
 import styled from 'styled-components'
 import ViewportEngine from 'viewport/ViewportEngine'
 import useResize from 'hooks/useResize'
@@ -11,32 +11,25 @@ interface Props {
 
 const ViewportPanel: React.FC<Props> = ({ materialState }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const viewportEngineRef = useRef<ViewportEngine>()
+  const babylonEngineRef = useRef<ViewportEngine>()
+
+  const material = materialState.materials[materialState.activeMaterial]
 
   const resize = () => {
-    if (viewportEngineRef.current) viewportEngineRef.current.handleResize()
+    if (babylonEngineRef.current) babylonEngineRef.current.handleResize()
   }
   useResize(ref, () => {
     resize()
   })
 
   const updateMaterial = () => {
-    const mat: Material = {
-      name: materialState.name,
-      albedoTexture: materialState.albedoTexture,
-      albedoColor: materialState.albedoColor,
-      roughness: materialState.roughness,
-      metallicTexture: materialState.metallicTexture,
-      metallic: materialState.metallic
-    }
-
-    if (viewportEngineRef.current) viewportEngineRef.current.setMaterial(mat)
+    if (babylonEngineRef.current) babylonEngineRef.current.setMaterial(material)
   }
 
   updateMaterial()
 
   const canvasRef = useCallback((canvas: HTMLCanvasElement) => {
-    viewportEngineRef.current = new ViewportEngine(canvas)
+    babylonEngineRef.current = new ViewportEngine(canvas)
     updateMaterial() // Initialize material
     resize()
   }, [])

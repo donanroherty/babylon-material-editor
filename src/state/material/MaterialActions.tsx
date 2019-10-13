@@ -1,15 +1,15 @@
 import { createActionPayload } from 'state/ActionCreator'
 
-export const ACTION_SET_BASE_COLOR = 'ACTION_SET_BASE_COLOR'
+export const ACTION_SET_ALBEDO_COLOR = 'ACTION_SET_ALBEDO_COLOR'
 export const ACTION_SET_ALBEDO_TEXTURE = 'ACTION_SET_ALBEDO_TEXTURE'
 export const ACTION_SET_ROUGHNESS = 'ACTION_SET_ROUGHNESS'
 export const ACTION_SET_METALLIC = 'ACTION_SET_METALLIC'
 
 export const MaterialActions = {
   setAlbedoColor: createActionPayload<
-    typeof ACTION_SET_BASE_COLOR,
+    typeof ACTION_SET_ALBEDO_COLOR,
     { r: number; g: number; b: number; a?: number }
-  >(ACTION_SET_BASE_COLOR),
+  >(ACTION_SET_ALBEDO_COLOR),
 
   setAlbedoTexture: createActionPayload<
     typeof ACTION_SET_ALBEDO_TEXTURE,

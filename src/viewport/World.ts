@@ -114,14 +114,24 @@ export default class World {
     )
     sphere.position.y = this._modelHeight / 2
 
-    sphere.material = new PBRMaterial('mat_sphere', scene, {})
+    sphere.material = this.createMaterial(
+      {
+        name: 'mat_01',
+        albedoTexture: '',
+        albedoColor: { r: 150, g: 150, b: 150 },
+        roughness: 0.2,
+        metallicTexture: '',
+        metallic: 0.0
+      },
+      scene
+    )
 
     return sphere
   }
 
   createMaterial = (mat: Material, scene: BABYLON.Scene) => {
     const newMat = new PBRMaterial('mat_sphere', scene, {
-      albedoColor: mat.albedoColor = new BABYLON.Color3(
+      albedoColor: new BABYLON.Color3(
         mat.albedoColor.r / 255,
         mat.albedoColor.g / 255,
         mat.albedoColor.b / 255
@@ -135,9 +145,6 @@ export default class World {
   }
 
   setMaterial = (mat: Material) => {
-    if (this._displayModel) {
-      const newMaterial = this.createMaterial(mat, this._scene)
-      this._displayModel.material = newMaterial
-    }
+    this._displayModel.material = this.createMaterial(mat, this._scene)
   }
 }
