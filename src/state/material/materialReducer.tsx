@@ -13,8 +13,7 @@ export interface MaterialState extends Material {}
 export const materialInitialState: MaterialState = {
   name: 'mat_01',
   albedoTexture: '',
-  baseColor: { r: 150, g: 150, b: 150 },
-  roughnessTexture: '',
+  albedoColor: { r: 150, g: 150, b: 150 },
   roughness: 0.2,
   metallicTexture: '',
   metallic: 0.0
@@ -26,7 +25,7 @@ export function materialReducer(
 ) {
   switch (action.type) {
     case ACTION_SET_BASE_COLOR:
-      return { ...state, baseColor: action.payload }
+      return { ...state, albedoColor: action.payload }
     case ACTION_SET_ALBEDO_TEXTURE:
       return state
     case ACTION_SET_ROUGHNESS:

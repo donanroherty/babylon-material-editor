@@ -4,6 +4,7 @@ import * as BABYLON from 'babylonjs'
 import { Vector3, PBRMetallicRoughnessMaterial } from 'babylonjs'
 import PBRMaterial from './PBRMaterial'
 import ViewportEngine from './ViewportEngine'
+import { SketchPicker } from 'react-color'
 
 export default class World {
   private _viewportEngine: ViewportEngine
@@ -14,11 +15,12 @@ export default class World {
   private _keyLight: BABYLON.DirectionalLight | null = null
   private _camera: BABYLON.ArcRotateCamera
   private _displayModel: BABYLON.Mesh
-  private _environment: BABYLON.EnvironmentHelper | null = null
+  private _environment: BABYLON.Mesh | null = null
   private _environmentTexturePath: string =
-    'C:\\Users\\Ronan\\Projects\\Apps\\babylon-material-editor\\public\\assets\\environment\\parking.dds'
-
+    'C:\\Users\\Ronan\\Projects\\Apps\\babylon-material-editor\\public\\assets\\environment\\room.dds'
   private _modelHeight = 2
+
+  private _environmentTextureInstance: BABYLON.CubeTexture
 
   constructor(
     main: ViewportEngine,
@@ -31,6 +33,12 @@ export default class World {
 
     // Create scene
     this._scene = new BABYLON.Scene(this._engine)
+
+    // Create initial environment texture for skybox and materials
+    this._environmentTextureInstance = BABYLON.CubeTexture.CreateFromPrefilteredData(
+      this._environmentTexturePath,
+      this._scene
+    )
 
     // Populate scene
     this._camera = this.createCamera(this._canvas, this._scene)
@@ -59,12 +67,27 @@ export default class World {
   }
 
   createEnvironment = (scene: BABYLON.Scene) => {
-    return scene.createDefaultEnvironment({
+    scene.createDefaultEnvironment({
       createGround: false,
-      createSkybox: true,
-      cameraExposure: 1,
-      skyboxTexture: this._environmentTexturePath
+      createSkybox: false,
+      cameraExposure: 1
+      // skyboxTexture: this._environmentTexturePath
     })
+
+    scene.imageProcessingConfiguration.exposure = 0.6
+    scene.imageProcessingConfiguration.contrast = 1.6
+
+    var skyBox = BABYLON.Mesh.CreateBox('hdrSkyBox', 1000.0, scene)
+    var mat = new BABYLON.PBRMaterial('skybox', scene)
+    mat.backFaceCulling = false
+    mat.reflectionTexture = this._environmentTextureInstance.clone()
+    mat.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE
+    mat.microSurface = 1.0
+    mat.disableLighting = true
+    skyBox.material = mat
+    skyBox.infiniteDistance = true
+
+    return skyBox
   }
 
   createKeyLight = (scene: BABYLON.Scene) => {
@@ -91,26 +114,23 @@ export default class World {
     )
     sphere.position.y = this._modelHeight / 2
 
-    const mat = new PBRMaterial('mat_sphere', scene, {
-      baseColor: new BABYLON.Color3(1, 0, 0),
-      roughness: 1,
-      metallic: 0,
-      environmentTexturePath: this._environmentTexturePath
-    })
-    sphere.material = mat
+    sphere.material = new PBRMaterial('mat_sphere', scene, {})
 
     return sphere
   }
 
   createMaterial = (mat: Material, scene: BABYLON.Scene) => {
-    const newMat = new PBRMetallicRoughnessMaterial('mat_sphere', scene)
-    newMat.baseColor = new BABYLON.Color3(
-      mat.baseColor.r / 255,
-      mat.baseColor.g / 255,
-      mat.baseColor.b / 255
-    )
-    newMat.roughness = mat.roughness
-    newMat.metallic = mat.metallic
+    const newMat = new PBRMaterial('mat_sphere', scene, {
+      albedoColor: mat.albedoColor = new BABYLON.Color3(
+        mat.albedoColor.r / 255,
+        mat.albedoColor.g / 255,
+        mat.albedoColor.b / 255
+      ),
+      roughness: mat.roughness,
+      metallic: mat.metallic
+    })
+    newMat.reflectionTexture = this._environmentTextureInstance.clone()
+
     return newMat
   }
 

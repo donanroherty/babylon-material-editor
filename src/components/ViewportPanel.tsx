@@ -24,8 +24,7 @@ const ViewportPanel: React.FC<Props> = ({ materialState }) => {
     const mat: Material = {
       name: materialState.name,
       albedoTexture: materialState.albedoTexture,
-      baseColor: materialState.baseColor,
-      roughnessTexture: materialState.roughnessTexture,
+      albedoColor: materialState.albedoColor,
       roughness: materialState.roughness,
       metallicTexture: materialState.metallicTexture,
       metallic: materialState.metallic
