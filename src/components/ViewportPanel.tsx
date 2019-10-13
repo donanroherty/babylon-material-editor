@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import ViewportEngine from 'viewport/ViewportEngine'
 import useResize from 'hooks/useResize'
 import { MaterialState } from 'state/material/materialReducer'
-import { Material } from 'types/types'
 
 interface Props {
   materialState: MaterialState
@@ -13,8 +12,6 @@ const ViewportPanel: React.FC<Props> = ({ materialState }) => {
   const ref = useRef<HTMLDivElement>(null)
   const babylonEngineRef = useRef<ViewportEngine>()
 
-  const material = materialState.materials[materialState.activeMaterial]
-
   const resize = () => {
     if (babylonEngineRef.current) babylonEngineRef.current.handleResize()
   }
@@ -23,7 +20,8 @@ const ViewportPanel: React.FC<Props> = ({ materialState }) => {
   })
 
   const updateMaterial = () => {
-    if (babylonEngineRef.current) babylonEngineRef.current.setMaterial(material)
+    if (babylonEngineRef.current)
+      babylonEngineRef.current.setMaterial(materialState)
   }
 
   updateMaterial()

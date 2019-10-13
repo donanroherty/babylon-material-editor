@@ -3,6 +3,8 @@ export type Material = {
   albedoTexture: string
   albedoColor: { r: number; g: number; b: number; a?: number }
   roughness: number
-  metallicTexture: string
   metallic: number
+  metallicTexture: string
+  bumpTexture: string
+  aoTexture: string
 }

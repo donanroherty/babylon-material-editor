@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import { ChromePicker, ColorResult } from 'react-color'
 import {
@@ -8,7 +8,10 @@ import {
 import {
   ACTION_SET_ROUGHNESS,
   ACTION_SET_METALLIC,
-  ACTION_SET_ALBEDO_COLOR
+  ACTION_SET_ALBEDO_COLOR,
+  ACTION_SET_METALLIC_TEXTURE,
+  ACTION_SET_AO_TEXTURE,
+  ACTION_SET_BUMP_TEXTURE
 } from 'state/material/MaterialActions'
 import useOutsideClick from 'hooks/useOutsideClick'
 
@@ -21,7 +24,9 @@ const MaterialEditor: React.FC<Props> = ({
   materialState,
   materialDispatch
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const metallicFileInputRef = useRef<HTMLInputElement>(null)
+  const bumpFileInputRef = useRef<HTMLInputElement>(null)
+  const aoFileInputRef = useRef<HTMLInputElement>(null)
   const colorPickerRef = useRef<HTMLElement>(null)
   const [albedoColorPickerOpen, setAlbedoColorPickerOpen] = useState(false)
 
@@ -29,7 +34,9 @@ const MaterialEditor: React.FC<Props> = ({
     albedoColor,
     roughness,
     metallic,
-    metallicTexture
+    metallicTexture,
+    bumpTexture,
+    aoTexture
   } = materialState.materials[materialState.activeMaterial]
 
   const hideAlbedoColorPicker = () => setAlbedoColorPickerOpen(false)
@@ -52,31 +59,65 @@ const MaterialEditor: React.FC<Props> = ({
     materialDispatch({ type: ACTION_SET_METALLIC, payload: val })
   }
 
-  const handleOpenFileDialog = () => {
-    if (fileInputRef.current) fileInputRef.current.click()
+  const handleOpenFileDialog = (name: string) => {
+    if (name === 'metallic') {
+      if (metallicFileInputRef.current) metallicFileInputRef.current.click()
+    } else if (name === 'bump') {
+      if (bumpFileInputRef.current)
+        if (bumpFileInputRef.current) bumpFileInputRef.current.click()
+    } else if (name === 'ao') {
+      if (aoFileInputRef.current)
+        if (aoFileInputRef.current) aoFileInputRef.current.click()
+    }
   }
 
-  const [filePath, setFilePath] = useState<string | null>(null)
-  const [file, setFile] = useState<string | ArrayBuffer | null>(null)
+  const fileChangedHandler = (e: any) => {
+    if (e.target.files.length === 0) return
 
-  // const fileChangedHandler = (e: any) => {
-  // if (e.target.files.length === 0) return
+    if (e.target.name === 'metallic') {
+      materialDispatch({
+        type: ACTION_SET_METALLIC_TEXTURE,
+        payload: e.target.files[0].path
+      })
+    } else if (e.target.name === 'bump') {
+      materialDispatch({
+        type: ACTION_SET_BUMP_TEXTURE,
+        payload: e.target.files[0].path
+      })
+    } else if (e.target.name === 'ao') {
+      materialDispatch({
+        type: ACTION_SET_AO_TEXTURE,
+        payload: e.target.files[0].path
+      })
+    }
 
-  // const file = e.target.files[0]
+    // const reader = new FileReader()
+    // reader.onloadend = () => {
+    //   setFile(reader.result)
+    // }
+    // reader.readAsDataURL(file)
+  }
 
-  // setFilePath(file.path)
-
-  // const reader = new FileReader()
-  // reader.onloadend = () => {
-  //   setFile(reader.result)
-  // }
-  // reader.readAsDataURL(file)
-  // }
-
-  const handleClearFileDialog = () => {
-    setFile(null)
-    setFilePath(null)
-    fileInputRef.current!.value = ''
+  const handleClearFileDialog = (name: string) => {
+    if (name === 'metallic') {
+      if (metallicFileInputRef.current) metallicFileInputRef.current.value = ''
+      materialDispatch({
+        type: ACTION_SET_METALLIC_TEXTURE,
+        payload: ''
+      })
+    } else if (name === 'bump') {
+      if (bumpFileInputRef.current) bumpFileInputRef.current!.value = ''
+      materialDispatch({
+        type: ACTION_SET_METALLIC_TEXTURE,
+        payload: ''
+      })
+    } else if (name === 'ao') {
+      if (aoFileInputRef.current) aoFileInputRef.current!.value = ''
+      materialDispatch({
+        type: ACTION_SET_METALLIC_TEXTURE,
+        payload: ''
+      })
+    }
   }
 
   return (
@@ -128,18 +169,60 @@ const MaterialEditor: React.FC<Props> = ({
         <Label>
           <Text>Metallic texture</Text>
         </Label>
-        <FilePath onClick={handleOpenFileDialog}>{metallicTexture}</FilePath>
-        <ClearFilePathButton onClick={handleClearFileDialog}>
+        <FilePath onClick={e => handleOpenFileDialog('metallic')}>
+          {metallicTexture.length > 0 ? metallicTexture : 'none'}
+        </FilePath>
+        <ClearFilePathButton onClick={e => handleClearFileDialog('metallic')}>
           <Text>X</Text>
         </ClearFilePathButton>
-        {/* <input
-          ref={fileInputRef}
+        <input
+          ref={metallicFileInputRef}
           type="file"
           accept="image/png, image/jpeg"
           name="metallic"
           style={{ position: 'fixed', top: '-100px' }}
           onChange={fileChangedHandler}
-        /> */}
+        />
+      </ShaderRow>
+
+      <ShaderRow>
+        <Label>
+          <Text>Bump texture</Text>
+        </Label>
+        <FilePath onClick={e => handleOpenFileDialog('bump')}>
+          {bumpTexture.length > 0 ? bumpTexture : 'none'}
+        </FilePath>
+        <ClearFilePathButton onClick={e => handleClearFileDialog('bump')}>
+          <Text>X</Text>
+        </ClearFilePathButton>
+        <input
+          ref={bumpFileInputRef}
+          type="file"
+          accept="image/png, image/jpeg"
+          name="bump"
+          style={{ position: 'fixed', top: '-100px' }}
+          onChange={fileChangedHandler}
+        />
+      </ShaderRow>
+
+      <ShaderRow>
+        <Label>
+          <Text>AO texture</Text>
+        </Label>
+        <FilePath onClick={e => handleOpenFileDialog('ao')}>
+          {aoTexture.length > 0 ? aoTexture : 'none'}
+        </FilePath>
+        <ClearFilePathButton onClick={e => handleClearFileDialog('ao')}>
+          <Text>X</Text>
+        </ClearFilePathButton>
+        <input
+          ref={aoFileInputRef}
+          type="file"
+          accept="image/png, image/jpeg"
+          name="ao"
+          style={{ position: 'fixed', top: '-100px' }}
+          onChange={fileChangedHandler}
+        />
       </ShaderRow>
     </Wrapper>
   )
@@ -197,6 +280,13 @@ const FilePath = styled.div`
   border-radius: 5px 0 0 5px;
   border-width: 1px 0 1px 1px;
   background-color: rgb(250, 250, 250);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+  box-sizing: border-box;
+  padding: 2px 12px;
 `
 const ClearFilePathButton = styled.div`
   display: flex;
@@ -209,7 +299,7 @@ const ClearFilePathButton = styled.div`
   width: 50px;
   height: 28px;
   cursor: pointer;
-  user-select: none;
+  box-sizing: border-box;
 `
 
 export default MaterialEditor

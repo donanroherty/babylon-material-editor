@@ -1,10 +1,9 @@
 import { Material } from 'types/types'
 import { MaterialState } from './../state/material/materialReducer'
 import * as BABYLON from 'babylonjs'
-import { Vector3, PBRMetallicRoughnessMaterial } from 'babylonjs'
+import { Vector3 } from 'babylonjs'
 import PBRMaterial from './PBRMaterial'
 import ViewportEngine from './ViewportEngine'
-import { SketchPicker } from 'react-color'
 
 export default class World {
   private _viewportEngine: ViewportEngine
@@ -21,6 +20,7 @@ export default class World {
   private _modelHeight = 2
 
   private _environmentTextureInstance: BABYLON.CubeTexture
+  private _metallicTextureInstance: BABYLON.Texture | null = null
 
   constructor(
     main: ViewportEngine,
@@ -31,7 +31,6 @@ export default class World {
     this._engine = engine
     this._canvas = canvas
 
-    // Create scene
     this._scene = new BABYLON.Scene(this._engine)
 
     // Create initial environment texture for skybox and materials
@@ -39,6 +38,8 @@ export default class World {
       this._environmentTexturePath,
       this._scene
     )
+
+    // this._metallicTextureInstance = new BABYLON.Texture.crea
 
     // Populate scene
     this._camera = this.createCamera(this._canvas, this._scene)
@@ -121,7 +122,9 @@ export default class World {
         albedoColor: { r: 150, g: 150, b: 150 },
         roughness: 0.2,
         metallicTexture: '',
-        metallic: 0.0
+        metallic: 0.0,
+        bumpTexture: '',
+        aoTexture: ''
       },
       scene
     )
@@ -141,10 +144,29 @@ export default class World {
     })
     newMat.reflectionTexture = this._environmentTextureInstance.clone()
 
+    if (mat.albedoTexture.length > 0)
+      newMat.albedoTexture = new BABYLON.Texture(mat.albedoTexture, scene)
+
+    if (mat.metallicTexture.length > 0)
+      newMat.metallicTexture = new BABYLON.Texture(mat.metallicTexture, scene)
+
+    if (mat.bumpTexture.length > 0)
+      newMat.bumpTexture = new BABYLON.Texture(mat.bumpTexture, scene)
+
+    if (mat.aoTexture.length > 0)
+      newMat.ambientTexture = new BABYLON.Texture(mat.aoTexture, scene)
+
+    newMat.useRoughnessFromMetallicTextureGreen = true
+    newMat.useRoughnessFromMetallicTextureAlpha = false
+    newMat.useMetallnessFromMetallicTextureBlue = true
+
     return newMat
   }
 
-  setMaterial = (mat: Material) => {
-    this._displayModel.material = this.createMaterial(mat, this._scene)
+  setMaterial = (matState: MaterialState) => {
+    this._displayModel.material = this.createMaterial(
+      matState.materials[matState.activeMaterial],
+      this._scene
+    )
   }
 }

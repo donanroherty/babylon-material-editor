@@ -1,12 +1,11 @@
 import React, { useReducer } from 'react'
 import styled, { createGlobalStyle } from 'theme/themed-styled-components'
-import MaterialBrowser from 'components/MaterialBrowser'
+// import MaterialBrowser from 'components/MaterialBrowser'
 import ViewportPanel from 'components/ViewportPanel'
 import MaterialEditor from 'components/MaterialEditor'
 
 import {
   materialReducer,
-  MaterialState,
   materialInitialState
 } from 'state/material/materialReducer'
 
@@ -52,19 +51,13 @@ body {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  /* display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: 360px 1fr;
-  grid-template-areas:
-    'material-browser viewport'
-    'material-browser material-property-editor'; */
   display: flex;
   flex-direction: row;
 `
-const LeftColumn = styled.div`
-  width: 240px;
-  height: 100%;
-`
+// const LeftColumn = styled.div`
+//   width: 240px;
+//   height: 100%;
+// `
 const RightColumn = styled.div`
   height: 100%;
   width: 100%;
